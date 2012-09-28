@@ -1,0 +1,3 @@
+[submodule "PDB"]
+	path = PDB
+	url = git://github.com/TheFrozenFire/Javascript-PalmDatabase.git

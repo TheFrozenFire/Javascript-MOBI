@@ -1,0 +1,33 @@
+<html>
+	<head>
+		<script type="text/javascript" src="PDB/binary-parser.js"></script>
+		<script type="text/javascript" src="PDB/StringStream.js"></script>
+		<script type="text/javascript" src="PDB/PDB.js"></script>
+		<script type="text/javascript" src="MOBI.js"></script>
+		<script type="text/javascript">
+			function loadMOBIFile(fileSelect) {
+				var reader = new FileReader();
+				
+				reader.onload = function(event) {
+					var mobi = new MOBI(this.result);
+					var result = document.getElementById('result');
+					
+					result.innerHTML = mobi.pdb.name;
+				}
+				
+				reader.onerror = function(event) {
+					var result = document.getElementById('result');
+					result.innerHTML = this.error.toString();
+				}
+			
+				var file = fileSelect.files[0];
+				reader.readAsBinaryString(file);
+			}
+		</script>
+	</head>
+	<body>
+		<input type="file" id="mobifile" name="file" />
+		<input type="submit" onclick="loadMOBIFile(document.getElementById('mobifile'))" value="Process MOBI" />
+		<div id="result"></div>
+	</body>
+</html>

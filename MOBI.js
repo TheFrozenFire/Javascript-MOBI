@@ -3,12 +3,34 @@ MOBI = function(mobifile) {
 	this.binary = this.pdb.binary;
 	if(mobifile) this.loadFile(mobifile);
 }; with ({mobiproto: MOBI.prototype}) {
+	mobiproto.loadFile = function(mobifile) {
+		this.pdb.loadFile(mobifile);
+		
+		var firstRecord = this.pdb.records[0];
+		if(!firstRecord)
+			return;
+		
+		var header = new StringStream(firstRecord.data);
+		
+		this.parsePalmDOCHeader(header);
+	}
+
 	mobiproto.compression = undefined;
-	mobiproto.textlength = undefined;
-	mobiproto.recordcount = undefined;
-	mobiproto.recordsize = undefined;
+	mobiproto.textLength = undefined;
+	mobiproto.recordCount = undefined;
+	mobiproto.recordSize = undefined;
 	mobiproto.currentPosition = undefined;
 	mobiproto.encryption = undefined;
+	
+	mobiproto.parsePalmDOCHeader = function(header) {
+		this.compression = this.binary.toWord(header.read(2));
+		header.read(2); // unused
+		this.textLength = this.binary.toDWord(header.read(4));
+		this.recordCount = this.binary.toWord(header.read(2));
+		this.recordSize = this.binary.toWord(header.read(2));
+		this.currentPosition = this.binary.toDWord(header.read(4));
+		this.encryption = this.binary.toWord(header.read(2));
+	}
 	
 	mobiproto.headerLength = undefined;
 	mobiproto.mobiType = undefined;
@@ -44,20 +66,19 @@ MOBI = function(mobifile) {
 	mobiproto.huffmanRecordOffset = undefined;
 	mobiproto.huffmanRecordCount = undefined;
 	mobiproto.huffmanTableOffset = undefined;
-
-	mobiproto.loadFile = function(mobifile) {
-		this.pdb.loadFile(mobifile);
-		
-		var firstRecord = this.pdb.records[0];
-		if(!firstRecord)
-			return;
-		
-		var header = new StringStream(firstRecord.data);
-		
-		this.parsePalmDOCHeader(header);
-	}
+	mobiproto.huffmanTableLength = undefined;
 	
-	mobiproto.parsePalmDOCHeader = function(header) {
-		
-	}
+	mobiproto.exthFlags = undefined;
+	
+	mobiproto.DRMOffset = undefined;
+	mobiproto.DRMCount = undefined;
+	mobiproto.DRMSize = undefined;
+	mobiproto.DRMFlags = undefined;
+	
+	mobiproto.firstContentRecordNumber = undefined;
+	mobiproto.lastContentRecordNumber = undefined;
+	
+	mobiproto.FCISRecordNumber = undefined;
+	mobiproto.FLISRecordNumber = undefined;
+	
 }
